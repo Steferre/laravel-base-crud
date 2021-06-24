@@ -13,9 +13,11 @@ class ComicController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        return view('comics.index');
+    public function index() {
+        // recupero i fumetti dal database
+        $comics = Comic::all();
+
+        return view('comics.index', compact('comics'));
     }
 
     /**
@@ -34,9 +36,27 @@ class ComicController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        //
+    public function store(Request $request) {
+        // grazie a $request->all prendo tutte le coppie chiave valore inviate/registrate nel form dall utente
+        // salvandole in comicData ottengo un array associativo
+        $comicData = $request->all();
+        // ora posso salvare questi dati in una nuova riga della mia tabella
+        // istanzio un nuovo fumetto
+        $newComic = new Comic;
+        $newComic->title = $comicData['title'];
+        $newComic->type = $comicData['type'];
+        $newComic->series = $comicData['series'];
+        $newComic->sale_date = $comicData['sale_date'];
+        $newComic->price = $comicData['price'];
+        $newComic->thumb = $comicData['thumb'];
+        $newComic->description = $comicData['description'];
+
+        // per salvare i dati si usa il metodo save del Model
+        $newComic->save();
+
+        //essendo un metodo post il return della funzione non mi dara' una view
+        // a tramite un redirect mi mostrera' la pagina dettagli del fumetto appena inserito
+        return redirect()->route('comics.show', $newComic->id);
     }
 
     /**
@@ -45,9 +65,9 @@ class ComicController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        return view('comics.show');
+    public function show(Comic $comic) {
+
+        return view('comics.show', compact('comic'));
     }
 
     /**

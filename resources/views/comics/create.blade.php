@@ -3,6 +3,9 @@
 @section('pageTitle', 'insert new comic')
 
 @section('content')
+
+@include('partials.errorsBox')
+
 <form action="{{ route('comics.store') }}" method="post">
     @csrf
     <label for="title">Title</label>
@@ -18,14 +21,14 @@
     <input type="date" name="sale_date" id="sale_date">
 
     <label for="price">Price</label>
-    <input type="number" name="price" id="price">
+    <input type="text" name="price" id="price">
 
     <label for="thumb">Thumb</label>
-    <input type="url" name="thumb" id="thumb">
+    <input type="text" name="thumb" id="thumb">
 
     <label for="description">Description</label>
-    <textarea name="description" id="description" rows="10"></textarea>
-    {{-- <input type="text" name="description" id="description"> --}}
+    {{-- <textarea name="description" id="description" rows="10"></textarea> --}}
+    <input type="text" name="description" id="description">
 
     <input type="submit" value="Invia">
 </form>

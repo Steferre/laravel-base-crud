@@ -22,15 +22,17 @@
     <tbody>
     @foreach($comics as $comic)
         <tr>
-            <td>{{ $comic->title}}</td>
-            <td>{{ $comic->description}}</td>
-            <td>{{ $comic->thumb}}</td>
-            <td>{{ $comic->price}}</td>
-            <td>{{ $comic->series}}</td>
-            <td>{{ $comic->sale_date}}</td>
-            <td>{{ $comic->type}}</td>
+            <td>{{ $comic->title }}</td>
+            <td>{{ $comic->type }}</td>
+            <td>{{ $comic->series }}</td>
+            <td>{{ $comic->sale_date }}</td>
+            <td>{{ $comic->price }}</td>
+            <td>{{ $comic->thumb }}</td>
+            <td>{{ $comic->description }}</td>
             <td>
-                <a href="{{ route('comics.show', $comic->id ) }}">Dettagli...</a>
+                <a href="{{ route('comics.show', $comic->id ) }}">Dettagli...</a> |
+                <a href="{{ route('comics.edit', $comic->id ) }}">Modifica</a> |
+                @include('partials.deleteBtn', ["comic" => $comic])
             </td>
         </tr>
     @endforeach

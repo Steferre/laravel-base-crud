@@ -41,6 +41,18 @@ class ComicController extends Controller
         // salvandole in comicData ottengo un array associativo
         $comicData = $request->all();
         // ora posso salvare questi dati in una nuova riga della mia tabella
+        // prima di instanziare un nuovo fumetto creo una validazione per i dati che deve inserire l utente
+        // grazie a laravel con il metodo validate
+        // per la validazione prendo spunto dalla migration che ho creato per la tabella
+        $request->validate([
+            'title' => 'string|required|max:100',
+            'type' => 'string|required|max:50',
+            'series' => 'string|required|max:50',
+            'sale_date' => 'date|required',
+            'price' => 'numeric',
+            'thumb' => 'string|nullable|max:150',
+            'description' => 'string|nullable',
+        ]);
         // istanzio un nuovo fumetto
         $newComic = new Comic;
         $newComic->title = $comicData['title'];
@@ -76,9 +88,8 @@ class ComicController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
-        //
+    public function edit(Comic $comic) {
+        return view('comics.edit', compact('comic'));
     }
 
     /**
@@ -88,9 +99,39 @@ class ComicController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        //
+    public function update(Request $request, $id) {
+        $modifiedComic = Comic::find($id); 
+
+        // come in store leggiamo tutti i dati passati dal form usando il metodo all di request
+        $modifiedData = $request->all();
+
+        $request->validate([
+            'title' => 'string|required|max:100',
+            'type' => 'string|required|max:50',
+            'series' => 'string|required|max:50',
+            'sale_date' => 'date|required',
+            'price' => 'numeric',
+            'thumb' => 'string|nullable|max:150',
+            'description' => 'string|nullable',
+        ]);
+
+
+        $modifiedComic->title = $modifiedData['title'];
+        $modifiedComic->type = $modifiedData['type'];
+        $modifiedComic->series = $modifiedData['series'];
+        $modifiedComic->sale_date = $modifiedData['sale_date'];
+        $modifiedComic->price = $modifiedData['price'];
+        $modifiedComic->thumb = $modifiedData['thumb'];
+        $modifiedComic->description = $modifiedData['description'];
+
+        $modifiedComic->save();
+
+        // tramite il metodo update aggiorniamo i dati che abbiamo raccolto
+        //$modifiedComic->update($modifiedData);
+
+        // il return di questa funzione come per lo store non mostrera' una view
+        // ma tramite un redirect ci mostrera' la pagina del dettaglio modificato
+        return redirect()->route('comics.show', $modifiedComic->id);
     }
 
     /**
@@ -101,6 +142,9 @@ class ComicController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $comic = Comic::findOrFail($id);
+        $comic->delete();
+
+        return redirect()->route('comics.index');
     }
 }
